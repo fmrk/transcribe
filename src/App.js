@@ -18,7 +18,7 @@ import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem'
-import MsTranslator from 'mstranslator';
+import translateApi from 'yandex-translate';
 
 const styles = {
   container: {
@@ -45,7 +45,8 @@ class App extends Component {
     inputString: null,
     strings: [],
     outputString: null,
-    language: 'pl' 
+    language: 'pl',
+    translated: false 
   };
 
   djsConfig = {
@@ -65,9 +66,7 @@ class App extends Component {
     {langauge: 'Italian', iso: 'it'},
     {langauge: 'German', iso: 'ger'}
   ];
-  client = new MsTranslator({
-    api_key: "1567be2bc6dc44fca98ba01bc222a662"
-  }, true);
+  client = translateApi('trnsl.1.1.20170811T043041Z.475a1cddd6be741d.b7505ef241050ea653bded561a7cb2a55d721f35');
 
   getMatches = (s, re) => {
     let m;
@@ -86,25 +85,27 @@ class App extends Component {
     // });
   }
   translate = (str) => {
-    var params = {
-      text: str,
-      from: 'en',
-      to: this.state.language
-    };
-     
-    // Don't worry about access token, it will be auto-generated if needed. 
-    this.client.translate(params, function(err, data) {
-      console.log(data);
+    const transcribe = this;
+    this.client.translate(str, { to: this.state.language }, function(err, res) {
+      if(res.text[0]){
+        const updatedStrings = transcribe.state.strings.map((element, i) => {
+          return element.value === str ?
+          {...element, translation: res.text[0] } :
+          element;
+        });
+        transcribe.setState({strings: updatedStrings, translated: true});
+      }
+      console.log(res.text[0]);
     });
   }
   handleTranslate = () => {
     const transcribe = this;
-    const translatedStrings = this.state.strings.map((element, i) => {
-      return element.translate ?
-      {...element, translation: transcribe.translate(element.value) } :
-      element;
+    this.state.strings.forEach((element, i) => {
+      if(element.translate){
+        let newElement = element;
+        newElement.translation = transcribe.translate(element.value);
+      }
     });
-    this.setState({strings: translatedStrings});
   }
 
   handleCheckboxChange = (e) => {
@@ -118,7 +119,18 @@ class App extends Component {
 
   }
 
-  
+  translateScript = () => {
+    let script = this.state.inputString;
+    this.state.strings.forEach((element, i) => {
+      if(element.translate && element.translation){
+        const replace = "'"+element.value+"'";
+        const re = new RegExp(replace,"g");
+        script = script.replace(re, "'"+element.translation+"'");
+      }
+    }
+    );
+    this.setState({outputString: script})
+  }
 
   handleGetStrings = () => {
     const sourceCode = this.state.inputString.content;
@@ -126,12 +138,6 @@ class App extends Component {
     
     const strings = this.getMatches(sourceCode, regExp);
     this.setState({strings: strings});
-    // const replacement = 'localizedStringArray.string';
-    // let i = 0;
-    // const result = sourceCode.replace(
-    //   new RegExp(regExp, 'g'),
-    //   `${replacement}${i++}`
-    // );
     console.log(strings);
   };
 
@@ -166,7 +172,7 @@ class App extends Component {
   };
   renderList = () => {
     const list = this.state.strings.map((element, i) => {
-      return <ListItem key={`li-${i}`} primaryText={element.translation ? element.value +' ➡️ '+element.translation : element.value} leftCheckbox={<Checkbox checked={element.translate} value={element.value} onClick={this.handleCheckboxChange}/>} />
+      return <ListItem key={`li-${i}`} primaryText={element.translation ? element.value +'  ➡️  '+element.translation : element.value} leftCheckbox={<Checkbox checked={element.translate} value={element.value} onClick={this.handleCheckboxChange}/>} />
   });
   return list;
   }
@@ -232,10 +238,17 @@ class App extends Component {
                   onTouchTap={this.handleGetStrings}
                 />
               </CardActions>}
+              {this.state.translated && !this.state.outputString && 
+              <CardActions>
+                <FlatButton
+                  label="Translate Script"
+                  onTouchTap={this.translateScript}
+                />
+              </CardActions>}
               
               <CardText expandable={true}>
                 <Highlight className="javascript">
-                  {inputString.content}
+                  {this.state.outputstring ? this.state.outputString : inputString.content}
                 </Highlight>
               </CardText>
             </Card>}
