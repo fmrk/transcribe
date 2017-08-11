@@ -120,7 +120,7 @@ class App extends Component {
   }
 
   translateScript = () => {
-    let script = this.state.inputString;
+    let script = this.state.inputString.content;
     this.state.strings.forEach((element, i) => {
       if(element.translate && element.translation){
         const replace = "'"+element.value+"'";
