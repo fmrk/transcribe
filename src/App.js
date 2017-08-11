@@ -211,7 +211,7 @@ class App extends Component {
               />
             </Dialog>
             <h1>✍️ TRANSCRIBE 🌏</h1>
-            <h2>translate your script</h2>
+            <h2>{this.state.outputString ? '🎉 DONE!' : 'translate your script'}</h2>
             {!inputString &&
               <RaisedButton
                 label="Upload your file"
