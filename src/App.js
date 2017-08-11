@@ -79,10 +79,6 @@ class App extends Component {
         }
     } while (m);
     return results;
-    // return str.match(regExp).map(function(el) {
-    //     var index = str.indexOf(el);
-    //     return [index, index + el.length - 1];
-    // });
   }
   translate = (str) => {
     const transcribe = this;
@@ -123,9 +119,9 @@ class App extends Component {
     let script = this.state.inputString.content;
     this.state.strings.forEach((element, i) => {
       if(element.translate && element.translation){
-        const replace = "'"+element.value+"'";
+        const replace = element.value;
         const re = new RegExp(replace,"g");
-        script = script.replace(re, "'"+element.translation+"'");
+        script = script.replace(re, element.translation);
       }
     }
     );
@@ -248,7 +244,7 @@ class App extends Component {
               
               <CardText expandable={true}>
                 <Highlight className="javascript">
-                  {this.state.outputstring ? this.state.outputString : inputString.content}
+                  {this.state.outputString ? this.state.outputString : inputString.content}
                 </Highlight>
               </CardText>
             </Card>}
