@@ -3,12 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.25.0",
+    "babel-extract-gettext": "^0.2.1",
+    "babel-gettext-extractor": "^3.0.0",
+    "babel-gettext-plugin": "^2.2.0",
+    "babel-plugin-jsx-text-extract": "^1.0.9",
+    "babel-plugin-syntax-jsx": "^6.18.0",
+    "babel-standalone": "^6.25.0",
+    "google-translate": "^2.0.5",
+    "google-translate-api": "^2.3.0",
+    "material-ui": "^0.18.7",
+    "mstranslator": "^3.0.0",
+    "osenv": "^0.1.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-scripts": "1.0.11"
+    "react-dropzone-component": "^2.0.0",
+    "react-highlight": "^0.10.0",
+    "react-scripts": "1.0.11",
+    "react-tap-event-plugin": "^2.0.1",
+    "translate-api": "^0.3.12"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
