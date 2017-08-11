@@ -66,7 +66,7 @@ class App extends Component {
     {langauge: 'Italian', iso: 'it'},
     {langauge: 'German', iso: 'ger'}
   ];
-  client = translateApi('trnsl.1.1.20170811T043041Z.475a1cddd6be741d.b7505ef241050ea653bded561a7cb2a55d721f35');
+  client = translateApi('client code');
 
   getMatches = (s, re) => {
     let m;
